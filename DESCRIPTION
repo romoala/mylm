@@ -19,3 +19,5 @@ Config/roxygen2/version: 8.1.1
 Roxygen: list(markdown = TRUE)
 Imports: 
     stats
+URL: https://github.com/romoala/mylm
+BugReports: https://github.com/romoala/mylm/issues
