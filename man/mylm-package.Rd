@@ -7,6 +7,14 @@
 \description{
 Fits linear regression models by implementing the core least squares algorithm from scratch, with results comparable to stats::lm(). Includes summary, print, and predict methods.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/romoala/mylm}
+  \item Report bugs at \url{https://github.com/romoala/mylm/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Juanran Zhang \email{juanranz@umich.edu}
 

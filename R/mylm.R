@@ -78,10 +78,12 @@ mylm = function(formula, data){
     standard.errors = se_beta,
     t.values = t_values,
     p.values = p_values,
-    fitted.values = as.vector(fitted_y),
-    residuals = as.vector(residuals_e),
+    fitted.values = drop(fitted_y),
+    residuals = drop(residuals_e),
     R.squared = R_squared,
-    df.residual = df
+    df.residual = df,
+    terms = attr(mf, "terms"),
+    xlevels = .getXlevels(attr(mf, "terms"), mf)
   )
   class(result) = "mylm"
   return(result)
