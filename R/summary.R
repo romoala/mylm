@@ -34,10 +34,11 @@ summary.mylm = function(object, ...){
 
   n = length(object$residuals)
   p = length(object$coefficients)
+  intercept = attr(object$terms, "intercept")
 
-  adj_r_squared = 1 - (1 - object$R.squared)*(n-1)/(n-p)
+  adj_r_squared = 1 - (1 - object$R.squared)*(n-intercept)/(n-p)
 
-  df1 = p-1
+  df1 = p-intercept
   df2 = object$df.residual
 
   F_value = (object$R.squared /df1)/((1-object$R.squared)/df2)

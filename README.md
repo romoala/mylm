@@ -113,6 +113,7 @@ vignette("mylm", package = "mylm")
 - Weights, offsets, and the `subset` argument are not supported.
 - The normal-equation method can be less numerically stable than the QR method used by `lm()`, especially when predictors are highly correlated.
 - The package does not support all features of `stats::lm()`.
+- Intercept-only models (y ~ 1) are not supported.
 
 ## License
 

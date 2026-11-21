@@ -59,8 +59,13 @@ mylm = function(formula, data){
   t_values = drop(beta) / se_beta
   p_values = 2 * pt(-abs(t_values), df = df)
 
-  # R-squared
-  TSS = sum((y - mean(y))^2)
+  # R-squared (TSS consider no-intercept case)
+  intercept = attr(attr(mf, "terms"), "intercept")
+  if (intercept == 1){
+    TSS = sum((y-mean(y))^2)
+  }else{
+    TSS = sum(y^2)
+  }
   R_squared = 1 - RSS/TSS
 
   # Store the results in a list
