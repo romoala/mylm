@@ -1,4 +1,3 @@
-
 ---
 title: "Introduction to mylm"
 output: rmarkdown::html_vignette
@@ -61,7 +60,7 @@ predict(fit, newdata = newdata)
 
 To evaluate the correctness of `mylm()`, we compare its results with those of `stats::lm()` using `all.equal()`.
 
-This function returns `TRUE` when two objects are equal within a specified numerical tolerance. Small numerical differences may occur to floating-point calculations.
+This function returns `TRUE` when two objects are equal within a specified numerical tolerance. Small numerical differences may occur due to floating-point calculations.
 
 ### Example 1: Continuous predictors (`mtcars`)
 
@@ -152,6 +151,26 @@ sim_data = data.frame(y = y, X)
 
 fit_my = mylm(y ~ ., data = sim_data)
 fit_lm = lm(y ~ ., data = sim_data)
+
+s_my = summary(fit_my)
+s_lm = summary(fit_lm)
+
+all.equal(unname(fit_my$coefficients), unname(coef(fit_lm)))
+all.equal(s_my$coefficients, s_lm$coefficients)
+all.equal(s_my$sigma, s_lm$sigma)
+all.equal(s_my$r.squared, s_lm$r.squared)
+all.equal(s_my$adj.r.squared, s_lm$adj.r.squared)
+all.equal(s_my$fstatistic, s_lm$fstatistic)
+all.equal(unname(fit_my$fitted.values), unname(fitted(fit_lm)))
+```
+### Example 5: Model without an intercept
+
+For models without an intercept (e.g. `y ~ x - 1`), `lm()` computes
+R-squared using the uncentered total sum of squares, and the F-statistic has `p` instead of `p - 1` numerator degrees of freedom. `mylm()` follows the same conventions.
+
+```{r}
+fit_my = mylm(mpg ~ wt + hp - 1, data = mtcars)
+fit_lm = lm(mpg ~ wt + hp - 1, data = mtcars)
 
 s_my = summary(fit_my)
 s_lm = summary(fit_lm)

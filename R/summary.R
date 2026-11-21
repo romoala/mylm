@@ -16,11 +16,15 @@
 #' @export
 
 summary.mylm = function(object, ...){
+
+  # Coefficients table
   coef_table = cbind(
     Estimate = object$coefficients,
     "Std. Error" = object$standard.errors,
     "t value" = object$t.values,
     "Pr(>|t|)" = object$p.values)
+
+  # Summary of residuals
   residual_summary = quantile(
     object$residuals,
     probs = c(0,0.25,0.5,0.75,1)
@@ -29,6 +33,7 @@ summary.mylm = function(object, ...){
     "Min", "1Q", "Median", "3Q", "Max"
   )
 
+  # Residual Standard Error
   RSS = sum(object$residuals^2)
   sigma = sqrt(RSS/object$df.residual)
 
@@ -36,6 +41,7 @@ summary.mylm = function(object, ...){
   p = length(object$coefficients)
   intercept = attr(object$terms, "intercept")
 
+  # Adjusted R-squared and F-statistics
   adj_r_squared = 1 - (1 - object$R.squared)*(n-intercept)/(n-p)
 
   df1 = p-intercept
