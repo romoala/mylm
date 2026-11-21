@@ -21,3 +21,8 @@ Imports:
     stats
 URL: https://github.com/romoala/mylm
 BugReports: https://github.com/romoala/mylm/issues
+Suggests: 
+    bench,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

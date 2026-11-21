@@ -20,7 +20,7 @@
 #' }
 #'
 #' @examples
-#' fit <- mylm(mpg ~ wt + hp, data = mtcars)
+#' fit = mylm(mpg ~ wt + hp, data = mtcars)
 #' fit
 #'
 #' @export

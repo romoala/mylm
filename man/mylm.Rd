@@ -30,7 +30,7 @@ Fits a linear regression model by solving the normal equations
 \eqn{X^T X \beta = X^T y}. Results are comparable to \code{\link[stats:lm]{stats::lm()}}.
 }
 \examples{
-fit <- mylm(mpg ~ wt + hp, data = mtcars)
+fit = mylm(mpg ~ wt + hp, data = mtcars)
 fit
 
 }

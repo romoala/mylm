@@ -1,3 +1,4 @@
+
 #' Summarize a mylm Object
 #'
 #' Computes the coefficient table, residual standard error, R-squared,
@@ -8,7 +9,12 @@
 #'
 #' @return An object of class `"summary.mylm"`.
 #'
+#' @examples
+#' fit = mylm(mpg ~ wt + hp, data = mtcars)
+#' summary(fit)
+#'
 #' @export
+
 summary.mylm = function(object, ...){
   coef_table = cbind(
     Estimate = object$coefficients,
@@ -55,12 +61,18 @@ summary.mylm = function(object, ...){
   return(result)
 }
 
+
 #' Print a summary.mylm Object
 #'
 #' @param x An object of class `"summary.mylm"`.
 #' @param ... Further arguments (currently ignored).
 #'
 #' @return The input object `x`, invisibly.
+#'
+#' @examples
+#' fit = mylm(mpg ~ wt + hp, data = mtcars)
+#' model_summary <- summary(fit)
+#' print(model_summary)
 #'
 #' @export
 print.summary.mylm = function(x, ...) {

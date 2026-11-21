@@ -21,7 +21,7 @@ A named numeric vector of predicted values.
 Computes predicted values from a fitted \code{mylm} model.
 }
 \examples{
-fit <- mylm(mpg ~ wt + hp, data = mtcars)
+fit = mylm(mpg ~ wt + hp, data = mtcars)
 predict(fit, newdata = data.frame(wt = c(2.5, 3), hp = c(100, 150)))
 
 }

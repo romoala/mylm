@@ -1,0 +1,224 @@
+
+---
+title: "Introduction to mylm"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to mylm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(mylm)
+```
+
+## 1. Introduction
+
+The `mylm` package provides a basic implementation of ordinary least squares (OLS) linear regression, reproducing the main functionality of `stats::lm()`. Regression coefficients are estimated by solving the normal equations:
+
+$$
+X^T X \hat{\beta} = X^T y
+$$
+
+The package provides `mylm()` for model fitting, `print()` for displaying fitted models, `summary()` for statistical inference, and `predict()` for generating predictions.
+
+## 2. Basic Usage
+
+### Fitting a model
+
+We first fit a multiple linear regression model using the built-in `mtcars` dataset, with fuel efficiency (`mpg`) as the response and vehicle weight (`wt`) and horsepower (`hp`) as predictors.
+
+```{r}
+fit = mylm(mpg ~ wt + hp, data = mtcars)
+fit
+```
+
+### Model summary
+
+The `summary()` method reports coefficient estimates, standard errors, t-statistics, p-values, residual summaries, R-squared, adjusted R-squared, and the overall F-statistic.
+
+```{r}
+summary(fit)
+```
+
+### Prediction
+
+The `predict()` method uses estimated regression coefficients to predict the response for new observations.
+
+```{r}
+newdata = data.frame(wt = c(2.5, 3.0), hp = c(100, 150))
+predict(fit, newdata = newdata)
+```
+
+## 3. Correctness: Comparison with `lm()`
+
+To evaluate the correctness of `mylm()`, we compare its results with those of `stats::lm()` using `all.equal()`.
+
+This function returns `TRUE` when two objects are equal within a specified numerical tolerance. Small numerical differences may occur to floating-point calculations.
+
+### Example 1: Continuous predictors (`mtcars`)
+
+We compare the results of a multiple linear regression model with two continuous predictors.
+
+```{r}
+fit_my = mylm(mpg ~ wt + hp, data = mtcars)
+fit_lm = lm(mpg ~ wt + hp, data = mtcars)
+
+s_my = summary(fit_my)
+s_lm = summary(fit_lm)
+
+all.equal(unname(fit_my$coefficients), unname(coef(fit_lm)))
+all.equal(s_my$coefficients, s_lm$coefficients)
+all.equal(s_my$sigma, s_lm$sigma)
+all.equal(s_my$r.squared, s_lm$r.squared)
+all.equal(s_my$adj.r.squared, s_lm$adj.r.squared)
+all.equal(s_my$fstatistic, s_lm$fstatistic)
+all.equal(unname(fit_my$fitted.values), unname(fitted(fit_lm)))
+all.equal(
+  unname(predict(fit_my, newdata)),
+  unname(predict(fit_lm, newdata))
+)
+```
+
+### Example 2: Factor predictor
+
+This example uses the number of cylinders (`cyl`) as a categorical
+predictor. The model includes both a continuous predictor (`wt`)
+and a factor predictor (`factor(cyl)`).
+
+```{r}
+fit_my = mylm(mpg ~ wt + factor(cyl), data = mtcars)
+fit_lm = lm(mpg ~ wt + factor(cyl), data = mtcars)
+
+s_my = summary(fit_my)
+s_lm = summary(fit_lm)
+
+all.equal(unname(fit_my$coefficients), unname(coef(fit_lm)))
+all.equal(s_my$coefficients, s_lm$coefficients)
+all.equal(s_my$sigma, s_lm$sigma)
+all.equal(s_my$r.squared, s_lm$r.squared)
+all.equal(s_my$adj.r.squared, s_lm$adj.r.squared)
+all.equal(s_my$fstatistic, s_lm$fstatistic)
+all.equal(unname(fit_my$fitted.values), unname(fitted(fit_lm)))
+```
+
+### Example 3: Interaction term
+
+We also evaluate a regression model containing an interaction
+between weight and horsepower. The formula `wt * hp` includes
+both main effects and their interaction.
+
+```{r}
+fit_my = mylm(mpg ~ wt * hp, data = mtcars)
+fit_lm = lm(mpg ~ wt * hp, data = mtcars)
+
+s_my = summary(fit_my)
+s_lm = summary(fit_lm)
+
+all.equal(unname(fit_my$coefficients), unname(coef(fit_lm)))
+all.equal(s_my$coefficients, s_lm$coefficients)
+all.equal(s_my$sigma, s_lm$sigma)
+all.equal(s_my$r.squared, s_lm$r.squared)
+all.equal(s_my$adj.r.squared, s_lm$adj.r.squared)
+all.equal(s_my$fstatistic, s_lm$fstatistic)
+all.equal(unname(fit_my$fitted.values), unname(fitted(fit_lm)))
+```
+
+### Example 4: Simulated data
+
+We generate a dataset with 500 observations and five independent standard normal predictors. The response is generated from a linear model with known regression coefficients and normally distributed random errors.
+
+The true coefficients are 1 for the intercept and (2, -1, 0.5, 0, 3) for the five predictors.
+
+```{r}
+set.seed(625)
+n = 500
+p = 5
+
+X = matrix(rnorm(n * p), nrow = n, ncol = p)
+colnames(X) = paste0("x", 1:p)
+
+beta_true = c(1, 2, -1, 0.5, 0, 3)
+y = drop(cbind(1, X) %*% beta_true) + rnorm(n)
+
+sim_data = data.frame(y = y, X)
+
+fit_my = mylm(y ~ ., data = sim_data)
+fit_lm = lm(y ~ ., data = sim_data)
+
+s_my = summary(fit_my)
+s_lm = summary(fit_lm)
+
+all.equal(unname(fit_my$coefficients), unname(coef(fit_lm)))
+all.equal(s_my$coefficients, s_lm$coefficients)
+all.equal(s_my$sigma, s_lm$sigma)
+all.equal(s_my$r.squared, s_lm$r.squared)
+all.equal(s_my$adj.r.squared, s_lm$adj.r.squared)
+all.equal(s_my$fstatistic, s_lm$fstatistic)
+all.equal(unname(fit_my$fitted.values), unname(fitted(fit_lm)))
+```
+
+These examples examine whether `mylm()` produces results consistent with `lm()` across different model specifications and sample sizes.
+
+## 4. Efficiency: `bench::mark()`
+
+We use `bench::mark()` to compare the computational efficiency of `mylm()` and `stats::lm()`.
+
+The benchmark measures execution time and memory allocation. We set `check = FALSE` because the two functions return objects with different classes and structures.
+
+### Small data (`mtcars`)
+
+```{r}
+bench_small = bench::mark(
+  mylm = mylm(mpg ~ wt + hp, data = mtcars),
+  lm   = lm(mpg ~ wt + hp, data = mtcars),
+  check = FALSE
+)
+
+bench_small
+```
+
+### Larger simulated data
+
+We also perform a benchmark using 10,000 observations and 20 predictors to examine computational performance on a larger dataset.
+
+```{r}
+set.seed(625)
+n = 10000
+p = 20
+
+X = matrix(rnorm(n * p), nrow = n, ncol = p)
+colnames(X) = paste0("x", 1:p)
+
+y = drop(X %*% rnorm(p)) + rnorm(n)
+big_data = data.frame(y = y, X)
+
+bench_large = bench::mark(
+  mylm = mylm(y ~ ., data = big_data),
+  lm   = lm(y ~ ., data = big_data),
+  check = FALSE
+)
+
+bench_large
+```
+
+### Benchmark interpretation
+
+On both datasets, `mylm()` and `lm()` have very similar median execution times. On the larger simulated dataset, `mylm()` is slightly faster. This is expected: for a moderate number of predictors, solving the normal equations requires fewer operations than a QR decomposition, and much of the running time of both functions is spent on processing the formula and building the design matrix with `model.frame()` and `model.matrix()`.
+
+`mylm()` allocates somewhat more memory than `lm()`, because it forms the transpose of the design matrix explicitly and computes standard errors, t-statistics, and p-values at fitting time, whereas `lm()` defers these calculations to `summary()`.
+
+## 5. Summary
+
+The `mylm` package provides an implementation of ordinary least squares regression using the normal equations. It supports multiple predictors, categorical variables, interaction terms, statistical summaries, and prediction.
+
+Correctness is evaluated through comparisons with `stats::lm()` on real and simulated datasets, while computational efficiency is evaluated using `bench::mark()`.
+
+Although the normal-equation approach is straightforward to implement and understand, it may be less numerically stable than the QR decomposition used by `lm()`, particularly for ill-conditioned design matrices.

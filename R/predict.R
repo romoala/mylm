@@ -10,7 +10,7 @@
 #' @return A named numeric vector of predicted values.
 #'
 #' @examples
-#' fit <- mylm(mpg ~ wt + hp, data = mtcars)
+#' fit = mylm(mpg ~ wt + hp, data = mtcars)
 #' predict(fit, newdata = data.frame(wt = c(2.5, 3), hp = c(100, 150)))
 #'
 #' @export
